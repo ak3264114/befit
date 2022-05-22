@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import logout ,login ,authenticate
 from blog.models import Blog
 
-from management.models import Appointment, Doctor, Patient
+from management.models import Doctor, Patient
 
 
 def home(request): 
@@ -54,7 +54,7 @@ def signup(request):
         if not username.isalnum():
             messages.error(request, "Username must be Alpha-Numeric!!")
             return redirect('signup')
-        if user_type == "patient":
+        if user_type == "patient" and pass1 == pass2:
             myuser = User.objects.create_user(username, email, pass1)
             myuser.first_name = fname
             myuser.last_name = lname
@@ -64,7 +64,7 @@ def signup(request):
             myuser.save()
             messages.success(request, "Your Account has been created succesfully!! Please Signin")
             return redirect('signup')
-        if user_type == "doctor":
+        if user_type == "doctor" and pass1 == pass2:
             myuser = User.objects.create_user(username, email, pass1)
             Doctor.first_name = fname
             Doctor.last_name = lname
@@ -73,8 +73,8 @@ def signup(request):
             # myuser.is_active = False
             myuser.is_staff = True
             myuser.save()
-            messages.success(request, "Your Account has been created succesfully!! Please Signin")
-            return redirect('signup')
+            messages.success(request, "Your Account has been created succesfully!!Please Signin")
+            return redirect('home')
         else:
             return HttpResponse("An error occourse!! Please try again")   
     else:
@@ -114,14 +114,14 @@ def profile(request):
         if  Doctor.objects.filter(user = request.user).exists():
             if Blog.objects.filter(blog_author = request.user).exists():
                 data = Doctor.objects.get(user = request.user)
-                appointment=Appointment.objects.get(booked_for = request.user.doctor.user)
+                # appointment=Appointment.objects.get(booked_for = request.user.doctor.user)
                 contents = Blog.objects.filter(blog_author = request.user)
-                return render(request, 'profile.html', {'data': data , 'contents':contents, 'appointment':appointment})
+                return render(request, 'profile.html', {'data': data , 'contents':contents})
             else:
                 data = Doctor.objects.get(user = request.user)
-                appointment=Appointment.objects.filter(booked_for =request.user.doctor.user)
+                # appointment=Appointment.objects.filter(booked_for =request.user.doctor.user)
                 contents = Blog.objects.filter(blog_author = request.user)
-                return render(request, 'profile.html', {'data': data, 'appointment':appointment})
+                return render(request, 'profile.html', {'data': data})
         else:
             return redirect('add_details')
         # user_id = request.user.id
