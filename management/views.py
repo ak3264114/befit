@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import logout ,login ,authenticate
 from blog.models import Blog
 
-from management.models import Doctor, Patient
+from management.models import Appointment, Doctor, Patient
 
 
 def home(request): 
